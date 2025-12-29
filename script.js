@@ -7,7 +7,6 @@ let isLightOn = false;
 let gameStep = 0;
 
 const audio = document.getElementById('bg-audio');
-
 const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 800;
 
 function resize() {
@@ -29,8 +28,10 @@ function updatePos(x, y) {
 
 window.addEventListener('mousemove', e => updatePos(e.clientX, e.clientY));
 window.addEventListener('touchmove', e => {
+
     updatePos(e.touches[0].clientX, e.touches[0].clientY);
 });
+
 
 class Snowflake {
     constructor() {
@@ -59,7 +60,7 @@ class Snowflake {
         let renderAlpha = this.alpha;
 
         if (gameStep > 0 && isLightOn) {
-            if (dist < 150) renderAlpha = 1.0; 
+            if (dist < 150) renderAlpha = 1.0;
         }
 
         if (this.y > height) this.reset();
@@ -73,6 +74,7 @@ class Snowflake {
         ctx.fill();
     }
 }
+
 
 class WarmParticle {
     constructor() {
@@ -122,7 +124,7 @@ class TreeBranch {
 
         if (this.lit) {
             ctx.strokeStyle = `rgba(255, 220, 100, ${0.4 + this.litProgress * 0.6})`;
-            ctx.lineWidth = this.depth * (isMobile ? 0.6 : 0.8) + 0.5; 
+            ctx.lineWidth = this.depth * (isMobile ? 0.6 : 0.8) + 0.5;
         } else {
             const dist = Math.hypot(this.x - mouse.x, this.y - mouse.y);
             const alpha = Math.max(0, 0.2 - dist/300);
@@ -134,7 +136,7 @@ class TreeBranch {
         if (this.lit && this.hasLight && this.litProgress > 0.8) {
             ctx.beginPath();
             ctx.arc(this.endX, this.endY, (isMobile ? 1.5 : 2) + Math.random(), 0, Math.PI*2);
-            ctx.fillStyle = '#ffca28'; 
+            ctx.fillStyle = '#ffca28';
             ctx.shadowBlur = 5;
             ctx.shadowColor = '#ff6f00';
             ctx.fill();
@@ -156,8 +158,8 @@ function generateTree(x, y, length, angle, depth) {
 
     const branchCount = 2;
     for (let i = 0; i < branchCount; i++) {
-        const spread = isMobile ? 0.33 : 0.45; 
-        
+        const spread = isMobile ? 0.33 : 0.45;
+
         const newLength = length * 0.75;
         const newAngle = angle + (i === 0 ? spread : -spread) + (Math.random()*0.1 - 0.05);
         generateTree(branch.endX, branch.endY, newLength, newAngle, depth - 1);
@@ -168,15 +170,14 @@ function initWorld() {
     snow = [];
     tree = [];
     particles = [];
-    
-    for(let i=0; i<150; i++) snow.push(new Snowflake());
 
+    for(let i=0; i<150; i++) snow.push(new Snowflake());
 
     let treeBaseLength;
     let startY = height; 
-    
-    if (isMobile) {.
-        treeBaseLength = height * 0.17; 
+
+    if (isMobile) {
+        treeBaseLength = height * 0.17;
     } else {
         treeBaseLength = height / 4.5;
     }
@@ -303,7 +304,7 @@ function animate() {
         glow.addColorStop(0, 'rgba(255, 200, 50, 0.6)'); 
         glow.addColorStop(0.3, 'rgba(255, 250, 200, 0.2)'); 
         glow.addColorStop(1, 'rgba(255, 255, 255, 0)'); 
-        
+
         ctx.fillStyle = glow;
         ctx.arc(mouse.x, mouse.y, 120, 0, Math.PI*2);
         ctx.fill();

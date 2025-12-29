@@ -1,0 +1,157 @@
+:root {
+    --bg-night: #090a14;
+    --bg-gradient: radial-gradient(circle at center, #161829 0%, #050508 100%);
+    --gold-light: #ffeb3b;
+    --gold-warm: #ffca28;
+    --text-soft: #e1e1ff;
+    --glass: rgba(255, 255, 255, 0.03);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background: var(--bg-night);
+    color: var(--text-soft);
+    font-family: 'Lato', sans-serif;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    cursor: none;
+}
+
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+
+#ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 1s ease;
+}
+
+.story-text {
+    font-family: 'Alice', serif;
+    font-size: 1.5rem;
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 1.5s ease;
+    max-width: 80%;
+    line-height: 1.6;
+}
+
+.story-text.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#start-trigger {
+    pointer-events: auto;
+    cursor: pointer;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff, var(--gold-warm));
+    box-shadow: 0 0 30px var(--gold-warm);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: twinkle 3s infinite ease-in-out;
+    transition: transform 0.3s;
+}
+
+#start-trigger:active {
+    transform: scale(0.9);
+}
+
+#finale-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    opacity: 0;
+    z-index: 20;
+    pointer-events: none;
+    transition: opacity 3s ease;
+
+    background: radial-gradient(closest-side, rgba(9, 10, 20, 0.85) 20%, rgba(9, 10, 20, 0) 100%);
+    padding: 60px 80px;
+    width: 100%;
+    max-width: 600px;
+}
+
+.year-title {
+    font-family: 'Alice', serif;
+    font-size: 5rem;
+    color: #fff;
+
+    text-shadow:
+            0 5px 10px rgba(0,0,0,0.8),
+            0 0 20px rgba(255, 202, 40, 0.6),
+            0 0 40px rgba(255, 111, 0, 0.4);
+
+    letter-spacing: 5px;
+    margin-bottom: 10px;
+}
+
+.wishes {
+    font-family: 'Lato', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: #ffffff;
+
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+
+.hint {
+    position: absolute;
+    bottom: 30px;
+    font-size: 0.9rem;
+    opacity: 0;
+    transition: opacity 1s;
+    color: rgba(255,255,255,0.6);
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.8; transform: scale(1); box-shadow: 0 0 20px var(--gold-warm); }
+    50% { opacity: 1; transform: scale(1.1); box-shadow: 0 0 50px var(--gold-warm); }
+}
+
+@media (max-width: 600px) {
+    .story-text { font-size: 1.2rem; }
+    .year-title { font-size: 3.5rem; }
+}
+.signature {
+    margin-top: 50px;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.35);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+}

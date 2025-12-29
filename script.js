@@ -1,4 +1,3 @@
-
 const canvas = document.getElementById('magic-canvas');
 const ctx = canvas.getContext('2d');
 
@@ -8,6 +7,7 @@ let isLightOn = false;
 let gameStep = 0;
 
 const audio = document.getElementById('bg-audio');
+const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
 
 function resize() {
     width = canvas.width = window.innerWidth;
@@ -54,13 +54,10 @@ class Snowflake {
 
         let renderAlpha = this.alpha;
 
+        // ВИПРАВЛЕННЯ: Прибрали важке світіння та зміну кольору на жовтий
         if (gameStep > 0 && isLightOn) {
             if (dist < 150) {
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = '#ffd700';
-                renderAlpha = 0.9;
-            } else {
-                ctx.shadowBlur = 0;
+                renderAlpha = 1.0; // Просто стає яскраво-білим
             }
         }
 
@@ -96,7 +93,8 @@ class WarmParticle {
     }
 
     draw() {
-        ctx.fillStyle = `rgba(255, 200, 50, ${this.life})`;
+        // ВИПРАВЛЕННЯ: Колір іскор тепер білий
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.life})`;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
@@ -126,12 +124,13 @@ class TreeBranch {
         ctx.lineTo(this.endX, this.endY);
 
         if (this.lit) {
-            ctx.strokeStyle = `rgba(255, 220, 150, ${0.2 + this.litProgress * 0.8})`;
+            // ВИПРАВЛЕННЯ: Гілки світяться білим/срібним
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.4 + this.litProgress * 0.6})`;
             ctx.lineWidth = this.depth * 0.8 + 0.5;
         } else {
             const dist = Math.hypot(this.x - mouse.x, this.y - mouse.y);
             const alpha = Math.max(0, 0.2 - dist/400);
-            ctx.strokeStyle = `rgba(100, 120, 150, ${alpha})`;
+            ctx.strokeStyle = `rgba(150, 160, 180, ${alpha})`;
             ctx.lineWidth = this.depth * 0.5;
         }
         ctx.stroke();
@@ -139,9 +138,10 @@ class TreeBranch {
         if (this.lit && this.hasLight && this.litProgress > 0.8) {
             ctx.beginPath();
             ctx.arc(this.endX, this.endY, 2 + Math.random(), 0, Math.PI*2);
-            ctx.fillStyle = '#ffca28';
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = '#ff6f00';
+            // ВИПРАВЛЕННЯ: Вогники на дереві білі
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowBlur = 5;
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.8)'; // Біле світіння
             ctx.fill();
             ctx.shadowBlur = 0;
         }
@@ -169,9 +169,15 @@ function generateTree(x, y, length, angle, depth) {
 }
 
 function initWorld() {
+    // Очищаємо масиви при ініціалізації, щоб не дублювати об'єкти
+    snow = [];
+    tree = [];
+    particles = [];
+
     for(let i=0; i<150; i++) snow.push(new Snowflake());
 
-    generateTree(width/2, height, height/4.5, -Math.PI/2, 10);
+    const treeHeight = Math.min(height/4.5, width * 0.8);
+    generateTree(width/2, height, treeHeight, -Math.PI/2, 10);
 }
 
 function checkTreeInteraction(mx, my) {
@@ -179,11 +185,13 @@ function checkTreeInteraction(mx, my) {
     tree.forEach(branch => {
         if (branch.lit) return;
 
-        const dx = mx - branch.x;
-        const dy = my - branch.y;
+        const dx = mx - branch.endX;
+        const dy = my - branch.endY;
         const dist = Math.sqrt(dx*dx + dy*dy);
 
-        if (dist < 80) {
+        const hitRadius = isMobile ? 140 : 80;
+
+        if (dist < hitRadius) {
             branch.lit = true;
             hit = true;
         }
@@ -282,21 +290,20 @@ function animate() {
         flake.draw(a);
     });
 
-    if (isLightOn && Math.random() > 0.8) {
-        particles.push(new WarmParticle());
-    }
-
     for (let i = particles.length - 1; i >= 0; i--) {
         particles[i].update();
         particles[i].draw();
         if (particles[i].life <= 0) particles.splice(i, 1);
     }
 
-    if (isLightOn) {
+    if (isLightOn ) {
         ctx.beginPath();
         const glow = ctx.createRadialGradient(mouse.x, mouse.y, 10, mouse.x, mouse.y, 100);
-        glow.addColorStop(0, 'rgba(255, 230, 150, 0.3)');
-        glow.addColorStop(1, 'rgba(255, 200, 50, 0)');
+
+        // ВИПРАВЛЕННЯ: Ліхтар (курсор) тепер завжди світить білим
+        glow.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
+        glow.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
         ctx.fillStyle = glow;
         ctx.arc(mouse.x, mouse.y, 100, 0, Math.PI*2);
         ctx.fill();

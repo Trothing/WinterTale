@@ -7,6 +7,7 @@ let isLightOn = false;
 let gameStep = 0;
 
 const audio = document.getElementById('bg-audio');
+
 const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 800;
 
 function resize() {
@@ -28,9 +29,9 @@ function updatePos(x, y) {
 
 window.addEventListener('mousemove', e => updatePos(e.clientX, e.clientY));
 window.addEventListener('touchmove', e => {
-
     updatePos(e.touches[0].clientX, e.touches[0].clientY);
 });
+
 
 
 class Snowflake {
@@ -75,7 +76,6 @@ class Snowflake {
     }
 }
 
-
 class WarmParticle {
     constructor() {
         this.x = mouse.x;
@@ -101,7 +101,6 @@ class WarmParticle {
         ctx.fill();
     }
 }
-
 class TreeBranch {
     constructor(x, y, length, angle, depth) {
         this.x = x;
@@ -158,7 +157,7 @@ function generateTree(x, y, length, angle, depth) {
 
     const branchCount = 2;
     for (let i = 0; i < branchCount; i++) {
-        const spread = isMobile ? 0.33 : 0.45;
+        const spread = isMobile ? 0.3 : 0.45;
 
         const newLength = length * 0.75;
         const newAngle = angle + (i === 0 ? spread : -spread) + (Math.random()*0.1 - 0.05);
@@ -174,7 +173,7 @@ function initWorld() {
     for(let i=0; i<150; i++) snow.push(new Snowflake());
 
     let treeBaseLength;
-    let startY = height; 
+    let startY = height;
 
     if (isMobile) {
         treeBaseLength = height * 0.17;
@@ -194,7 +193,8 @@ function checkTreeInteraction(mx, my) {
         const dy = my - branch.endY;
         const dist = Math.sqrt(dx*dx + dy*dy);
 
-        const hitRadius = isMobile ? 100 : 80;
+        // === Радіус ====
+        const hitRadius = isMobile ? (width * 0.25) : 80;
 
         if (dist < hitRadius) {
             branch.lit = true;
@@ -301,9 +301,9 @@ function animate() {
     if (isLightOn) {
         ctx.beginPath();
         const glow = ctx.createRadialGradient(mouse.x, mouse.y, 5, mouse.x, mouse.y, 120);
-        glow.addColorStop(0, 'rgba(255, 200, 50, 0.6)'); 
-        glow.addColorStop(0.3, 'rgba(255, 250, 200, 0.2)'); 
-        glow.addColorStop(1, 'rgba(255, 255, 255, 0)'); 
+        glow.addColorStop(0, 'rgba(255, 200, 50, 0.6)');
+        glow.addColorStop(0.3, 'rgba(255, 250, 200, 0.2)');
+        glow.addColorStop(1, 'rgba(255, 255, 255, 0)');
 
         ctx.fillStyle = glow;
         ctx.arc(mouse.x, mouse.y, 120, 0, Math.PI*2);
